@@ -1,6 +1,6 @@
-var ageWiseLiterateDistribution = {};
-var gradPopStateAndGradeWise = {};
-var eduCategWise = {};
+var age = {};
+var grade = {};
+var catogery = {};
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>functon to change in array of object/////////////////////////////
 function format(obj) {
   var array = [];
@@ -25,59 +25,44 @@ function arrayConversion(text)
     {
       var line=line.split(',');
       if(num!=0){
-        line[4]=line[4];
+        //line[4]=line[4];
         ageKey=line[5];
         //console.log(data);
         if(line[4] == "Total" )
         {
+          //all ages wise //
         if (line[5] != "All ages")
         {
+                age[ageKey] = {};
+                age[ageKey].ageGroup = ageKey;
+                age[ageKey].totallit = line[12];
 
-          if(ageKey in ageWiseLiterateDistribution)
-          {
-            //ageWiseLiterateDistribution[ageKey].TotalLiteratePop = line[12];
-
-          }
-          else
-              {
-                ageWiseLiterateDistribution[ageKey] = {};
-                ageWiseLiterateDistribution[ageKey].ageGroup = ageKey;
-                ageWiseLiterateDistribution[ageKey].TotalLiteratePop = line[12];
-              }
-      }
+        }
           else
             {
-              //For Second Statwise and gender wise Graduate Population
+              //For Second eduWise Population//
               var areaKey = line[3];
               var gradM = line[40];
               var gradF = line[41];
 
-              if (areaKey in gradPopStateAndGradeWise)
-              {
-                gradPopStateAndGradeWise[areaKey].gradMales = gradM;
-                gradPopStateAndGradeWise[areaKey].gradFemales = gradF;
-              }
-              else
-              {
-                gradPopStateAndGradeWise[areaKey] = {area: areaKey, gradMales: gradM, gradFemales: gradF};
+                grade[areaKey] = {area: areaKey, gradMales: gradM, gradFemales: gradF};
 
-              }
+            }
 
-      }
               //For Third Education Category wise - all India data combined together
-      for(eduCatIndex=15;eduCatIndex<44;eduCatIndex+=3)
+      for(index=15;index<44;index+=3)
       {
 
-        var eduCatValue = header[eduCatIndex].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+        var eduValue = header[index].split(",");
 
-        var totalPopValue = line[eduCatIndex];
-              if (eduCatValue in eduCategWise)
+        var totalPopulation = line[index];
+              if (eduValue in catogery)
                 {
-                    eduCategWise[eduCatValue].totalPop = totalPopValue;
+                    catogery[eduValue].totalPop = totalPopulation;
                 }
               else
               {
-                  eduCategWise[eduCatValue] = {eduCateg: eduCatValue, totalPop:totalPopValue };
+                  catogery[eduValue] = {eduCateg: eduValue, totalPop:totalPopulation };
 
               }
       }
@@ -98,20 +83,17 @@ function fileReader(fileNames){
     var fs=require('fs');
     var data=fs.readFileSync(fileName).toString();
     arrayConversion(data);
-    //console.log(data);
+    console.log(data);
   });
-  ageWiseLiterateDistribution=format(ageWiseLiterateDistribution);
-  gradPopStateAndGradeWise = format(gradPopStateAndGradeWise);
-  eduCategWise = format(eduCategWise);
+
+  age=format(age);
+  grade = format(grade);
+  catogery = format(catogery);
 
 }
-function write()
-{
+
+
   var fs=require('fs');
-  fs.writeFile("JsonFile/ageWise.json",JSON.stringify(ageWiseLiterateDistribution),function(err){if(err) throw err; console.log("file saved1");})
-  fs.writeFile("JsonFile/gradwise.json",JSON.stringify(gradPopStateAndGradeWise),function(err){if(err) throw err; console.log("file saved2");})
-  fs.writeFile("JsonFile/eduWise.json",JSON.stringify(eduCategWise),function(err){if(err) throw err; console.log("file saved3");})
-
-
-}
-  write();
+  fs.writeFile("JsonFile/ageWise.json",JSON.stringify(age),function(err){if(err) throw err; console.log("file saved1");})
+  fs.writeFile("JsonFile/gradwise.json",JSON.stringify(grade),function(err){if(err) throw err; console.log("file saved2");})
+  fs.writeFile("JsonFile/eduWise.json",JSON.stringify(catogery),function(err){if(err) throw err; console.log("file saved3");})
